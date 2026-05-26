@@ -138,7 +138,7 @@ flowchart LR
 ```
 
 ---
-layout: default
+layout: two-cols
 ---
 
 # Routing in Action: The Dual Path
