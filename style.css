@@ -1,0 +1,4 @@
+/* Keep Slidev's goto panel toggleable: hide it when it's in closed state. */
+#slidev-goto-dialog:not(.top-5) {
+  display: none !important;
+}
