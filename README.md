@@ -2,7 +2,7 @@
 
 ## GitHub Pages
 
-This project is configured to deploy automatically to GitHub Pages via GitHub Actions.
+This project is published on GitHub Pages.
 
 - Repository: `phiwi/chatbot`
 - Expected URL: `https://phiwi.github.io/chatbot/`
