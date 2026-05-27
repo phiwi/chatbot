@@ -76,6 +76,49 @@ If Mark Helm wrote 25 papers, but Top-K is set to 5, the LLM literally cannot se
 layout: default
 ---
 
+# Similarity Trap: Question != Answer
+
+<div class="text-left text-sm leading-snug">
+<b>Observation:</b> the wording of a question is often unlike the wording of the best evidence chunk.
+
+<br>
+
+<b>Query:</b> "Which papers did Mark Helm publish?"
+
+<b>Best evidence shape:</b> author lists and bibliography rows, often without explicit "publish" wording.
+
+<br>
+
+<b>Consequence:</b> pure query-embedding can rank semantically plausible but operationally wrong chunks too high.
+
+<div class="mt-3 p-2 rounded bg-emerald-50 border border-emerald-200 text-emerald-900">
+<b>HyDE hint:</b> Generate a short hypothetical answer first, embed that text, then retrieve. This shifts search toward answer-shaped evidence.
+</div>
+</div>
+
+```mermaid
+flowchart LR
+  classDef bad fill:#fee2e2,stroke:#991b1b,color:#111827,stroke-width:2px
+  classDef q fill:#dbeafe,stroke:#1d4ed8,color:#111827,stroke-width:2px
+
+  Q1[Without HyDE:<br>Embed user query]:::q --> W1[Top-k mostly topical chunks]:::bad
+  W1 --> D1[(Misses key bibliography rows)]:::bad
+```
+
+```mermaid
+flowchart LR
+  classDef good fill:#dcfce7,stroke:#166534,color:#111827,stroke-width:2px
+  classDef q fill:#dbeafe,stroke:#1d4ed8,color:#111827,stroke-width:2px
+
+  Q2[With HyDE:<br>Query -> hypothetical answer]:::q --> H[Embed hypothetical answer]:::good
+  H --> W2[Top-k matches author/title rows]:::good
+  W2 --> D2[(Higher recall for list questions)]:::good
+```
+
+---
+layout: default
+---
+
 # The "Smart BS" Illusion (Parametric Memory Leak)
 
 When RAG fails, strong LLMs try to help anyway.
@@ -189,89 +232,177 @@ layout: default
 
 # The Boss Level: Multi-Document Summarization
 
-> *"Please summarize the 4 papers by Christoph Dieterich."*
+> *"Please summarize them."*
 
-Why this is hard:
+One short sentence, four independent failure modes.
 
-- Multi-turn context: "summarize them" must resolve to the 4 titles from the previous turn.
-- Retrieval precision: only those 4 papers should be fetched.
-- Context limits: loading all full texts at once causes loss-in-the-middle and hallucinations.
+```mermaid
+flowchart TB
+  classDef core fill:#dbeafe,stroke:#1d4ed8,color:#111827,stroke-width:2px
+  classDef p1 fill:#ffe4e6,stroke:#be123c,color:#111827,stroke-width:2px
+  classDef p2 fill:#fef3c7,stroke:#b45309,color:#111827,stroke-width:2px
+  classDef p3 fill:#cffafe,stroke:#0e7490,color:#111827,stroke-width:2px
+  classDef p4 fill:#e0e7ff,stroke:#4338ca,color:#111827,stroke-width:2px
 
-<div class="mt-4 p-4 rounded-md bg-blue-50 border border-blue-200 text-blue-900">
-  <b>Design principle:</b> Resolve state first, then summarize iteratively.
-</div>
+  Q["User query: Please summarize them"]:::core
+  Q --> A["Step 1 - Which papers are referenced"]:::p1
+  Q --> B["Step 2 - Rewrite query as standalone"]:::p2
+  Q --> C["Step 3 - Retrieve evidence without overload"]:::p3
+  Q --> D["Step 4 - Keep metadata deterministic"]:::p4
+```
 
-<div class="mt-4 text-sm text-slate-900 font-medium bg-slate-100 border border-slate-300 rounded-md px-3 py-2">
-  Pipeline: <b>State Resolution</b> -> <b>Targeted Retrieval</b> -> <b>Map-Reduce Aggregation</b>
+<div class="mt-3 p-3 rounded-md bg-slate-100 border border-slate-300 text-slate-900">
+<b>Design strategy:</b> solve each failure mode explicitly with one dedicated architectural improvement.
 </div>
 
 ---
 layout: default
 ---
 
-# The Solution: State Management & Iterative Map-Reduce
+# Problem 1: Follow-up queries lose context
 
-We designed a highly isolated, conversational loop architecture to prevent hallucinations and context overflow.
+Without explicit state, "them" is ambiguous and the bot may summarize the wrong papers.
 
-### Step 1: Resolving Conversational State
-Before routing, an LLM rewrites the query using the chat history to inject explicit metadata anchors.
+<div class="mt-3 p-3 rounded-md bg-rose-50 border border-rose-200 text-rose-900">
+<b>Solution introduced:</b> <b>Conversational Memory</b><br>
+Persist paper identities across turns and resolve follow-up references from that memory.
+</div>
 
-```mermaid
-flowchart LR
-  classDef start fill:#dbeafe,stroke:#1e3a8a,color:#111827,stroke-width:2px
-  classDef process fill:#bbf7d0,stroke:#166534,color:#111827,stroke-width:2px
-  classDef mem fill:#fce4ec,stroke:#880e4f,color:#111827,stroke-width:2px
+<div class="mt-2 text-sm font-semibold text-sky-200">Real memory snapshot (conversation.memory)</div>
 
-  Q(["Query: 'Summarize them'"]):::start --> Rewriter[Query Rewriter]:::process
-  History[("Chat Memory<br>(State: 4 Titles)")]:::mem -.->|"Inject State"| Rewriter
-  Rewriter --> Clean(["Rewritten Query: 'Summarize Paper A, B, C, D'"]):::start
+```json
+[
+  {
+    "title": "Detection of queuosine and queuosine precursors in tRNAs by direct RNA sequencing",
+    "authors": "Yu Sun, Michael Piechotta, Isabel Naarmann-de Vries, Christoph Dieterich, Ann E. Ehrenhofer-Murray",
+    "year": "2023",
+    "journal": "Nucleic Acids Res"
+  },
+  {
+    "title": "Sci-ModoM: a quantitative database of transcriptome-wide high-throughput RNA modification sites",
+    "authors": "Etienne Boileau, Harald Wilhelmi, Anne Busch, Andrea Cappannini, Andreas Hildebrand, Janusz M. Bujnicki, Christoph Dieterich",
+    "year": "2025",
+    "journal": "Nucleic Acids Res"
+  }
+]
 ```
 
 ---
 layout: default
 ---
 
-# The Solution: State Management & Iterative Map-Reduce (Part 2)
+# Problem 2: Query text is underspecified
 
-### Step 2: Isolated Map-Reduce
-The rewritten query is split into an array. Each paper is processed in isolation.
+Even with memory, retrieval works poorly if the raw user text is not standalone.
 
-```mermaid
-flowchart LR
-  classDef process fill:#bbf7d0,stroke:#166534,color:#111827,stroke-width:2px
-  classDef llm fill:#c7d2fe,stroke:#3730a3,color:#111827,stroke-width:2px
-  classDef start fill:#dbeafe,stroke:#1e3a8a,color:#111827,stroke-width:2px
+<div class="mt-3 p-3 rounded-md bg-amber-50 border border-amber-200 text-amber-900">
+<b>Solution introduced:</b> <b>Question Rewriter</b><br>
+Rewrite the user query into a self-contained retrieval query before searching.
+</div>
 
-  CleanQ(["Rewritten Query"]) --> Extr[List Extractor<br>JSON Array]:::process
+<div class="mt-2 text-sm font-semibold text-sky-200">Real rewrite example</div>
 
-  subgraph Iteration ["Map Phase (Loop)"]
-    direction LR
-    Item("For each Paper") --> Retr[Targeted Retrieval<br>Top-K=10<br>Filter: Title = Current]:::process
-    Retr --> MiniLLM[LLM: Single Summary<br>Strict Guardrails]:::llm
-  end
+```text
+Input query:
+Please summarize them.
 
-  Extr --> Iteration
-  Iteration --> Agg[Reduce Phase<br>Final LLM Aggregator]:::llm
-  Agg --> Out(["Unified Answer"]):::start
+Conversation memory contains:
+- Detection of queuosine and queuosine precursors in tRNAs by direct RNA sequencing (2023)
+- Adaptive sampling for nanopore direct RNA-sequencing (2023)
+- Detecting m6A at single-molecular resolution via direct RNA sequencing and realistic training data (2024)
+- Sci-ModoM: a quantitative database of transcriptome-wide high-throughput RNA modification sites (2025)
+
+Rewritten standalone query:
+Please summarize these four papers: Detection of queuosine and queuosine precursors in tRNAs by direct RNA sequencing; Adaptive sampling for nanopore direct RNA-sequencing; Detecting m6A at single-molecular resolution via direct RNA sequencing and realistic training data; Sci-ModoM: a quantitative database of transcriptome-wide high-throughput RNA modification sites.
 ```
 
-  <div class="mt-2 text-[0.74rem] leading-tight bg-slate-50 border border-slate-200 rounded-md p-2 text-slate-800">
-    <div class="font-semibold mb-1">Execution Trace (under the hood)</div>
-    <div class="grid grid-cols-2 gap-2">
-      <div>
-        <b>Context</b><br>
-        - Turn 1: ask for Dieterich papers -> save <i>Paper A</i> + <i>Paper B</i> to memory.<br>
-        - Turn 2: "Please summarize them."<br>
-        - Rewrite: "Summarize Paper A and Paper B."
-      </div>
-      <div>
-        <b>Pipeline</b><br>
-        - Extract: <span class="font-mono">['Paper A', 'Paper B']</span><br>
-        - Map: A retrieve/summarize + B retrieve/summarize<br>
-        - Reduce: aggregate A + B -> final answer
-      </div>
-    </div>
-  </div>
+---
+layout: default
+---
+
+# Problem 3: One-shot retrieval misses evidence
+
+Batching everything at once causes noisy context and loss-in-the-middle.
+
+<div class="mt-3 p-3 rounded-md bg-cyan-50 border border-cyan-200 text-cyan-900">
+<b>Solution introduced:</b> <b>Iterative Knowledge Retrieval</b><br>
+Process one paper at a time (retrieve -> summarize), then aggregate.
+</div>
+
+<div class="mt-2 text-sm font-semibold text-sky-200">Execution model (For each paper)</div>
+
+```python
+paper_list = resolve_paper_list(query, memory)
+partials = []
+
+for paper in paper_list:
+    docs = knowledge_retrieval_with_filter(
+        title=paper["title"],
+        authors=paper["authors"],
+        year=paper["year"],
+        top_k=10,
+    )
+    partials.append(paper_map_llm(paper, docs))
+
+final_answer = reduce_llm(partials, requested_order=paper_list)
+```
+
+---
+layout: default
+---
+
+# Problem 4: Metadata answers must be deterministic
+
+Author/year/journal questions are fragile if answered only via semantic similarity.
+
+<div class="mt-3 p-3 rounded-md bg-indigo-50 border border-indigo-200 text-indigo-900">
+<b>Solution introduced:</b> <b>DB Lookup with fixed metadata filter</b><br>
+Apply strict metadata constraints (author, year, journal, title) before generating output.
+</div>
+
+<div class="mt-2 text-sm font-semibold text-sky-200">Fixed metadata filter example</div>
+
+```json
+{
+  "author": "Christoph Dieterich",
+  "year": "2025",
+  "journal": "Nucleic Acids Res",
+  "title": "Sci-ModoM"
+}
+```
+
+<div class="text-[0.64rem] leading-tight">
+
+```graphql
+{
+  Get{Document(where:{
+    operator:And,
+    operands:[
+      {path:["authors"],operator:Like,valueText:"*Christoph Dieterich*"},
+      {path:["year"],operator:Equal,valueText:"2025"}
+    ]}){title year}}
+}
+```
+
+</div>
+
+---
+layout: default
+---
+
+# Full Chatbot Flow (Simplified)
+
+<img src="/chatbot_mermaid.png" class="mx-auto max-h-[72vh] object-contain" />
+
+---
+layout: default
+---
+
+# The Reality
+
+<div class="text-sky-200 text-sm mb-2">Production view in Dify (complex workflow, condensed in the previous architecture slide)</div>
+
+<img src="/chatbot_dify.png" class="mx-auto max-h-[72vh] object-contain rounded-md" />
 
 ---
 layout: default
