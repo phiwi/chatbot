@@ -11,7 +11,6 @@ info: |
   From Naive RAG to Multi-Agent Orchestration
 drawings:
   persist: false
-title: Beyond "LLM In / LLM Out"
 ---
 
 <style>
@@ -135,6 +134,39 @@ title: Beyond "LLM In / LLM Out"
   0%, 100% { opacity: 0.55; }
   50% { opacity: 0.92; }
 }
+
+/* Slide 17: high-contrast inline/query code for readability inside colored cards. */
+.kg-rag-slide code {
+  background: #e2e8f0;
+  color: #0f172a;
+  padding: 0.05rem 0.28rem;
+  border-radius: 0.25rem;
+  border: 1px solid #cbd5e1;
+}
+
+.kg-rag-slide .query-code {
+  display: block;
+  margin-top: 0.35rem;
+  background: #f8fafc;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.35rem;
+  padding: 0.35rem 0.45rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.72rem;
+  line-height: 1.25;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Slide 16: high-contrast inline code in explanatory cards. */
+.kg-rag-slide16 code {
+  background: #e2e8f0;
+  color: #0f172a;
+  padding: 0.05rem 0.28rem;
+  border-radius: 0.25rem;
+  border: 1px solid #cbd5e1;
+}
 </style>
 
 <div class="hero-chat-slide">
@@ -230,45 +262,27 @@ layout: default
 # Similarity Trap: Question != Evidence Wording
 
 <div class="text-left text-sm leading-snug">
-<b>Observation:</b> the wording of a question is often unlike the wording of the best evidence chunk.
+<b>Problem:</b> semantic similarity follows wording, while evidence is often formatted differently.
 
-<br>
-
-<b>Query:</b> "Which papers did Mark Helm publish?"
-
-<b>Best evidence shape:</b> author lists and bibliography rows, often without explicit "publish" wording.
-
-<br>
-
-<b>Consequence:</b> pure query-embedding can rank semantically plausible but operationally wrong chunks too high.
-
-<div class="mt-3 p-2 rounded bg-emerald-50 border border-emerald-200 text-emerald-900">
-<b>Important:</b> HyDE is one possible trick to improve semantic retrieval alignment, not a mandatory component.
-</div>
-
-<div class="mt-2 p-2 rounded bg-sky-50 border border-sky-200 text-sky-900">
-<b>Our project choice:</b> Query Rewriter + structured metadata-aware routing (instead of HyDE) to make queries retrieval-ready.
-</div>
+<b>Example:</b> Query: "Which papers did Mark Helm publish?"<br>
+Evidence is mostly in author lists and bibliography rows.
 </div>
 
 ```mermaid
 flowchart LR
+  classDef q fill:#dbeafe,stroke:#1d4ed8,color:#111827,stroke-width:2px
   classDef bad fill:#fee2e2,stroke:#991b1b,color:#111827,stroke-width:2px
-  classDef q fill:#dbeafe,stroke:#1d4ed8,color:#111827,stroke-width:2px
-
-  Q1[Naive query embedding]:::q --> W1[Top-k mostly topical chunks]:::bad
-  W1 --> D1[(Misses key bibliography rows)]:::bad
-```
-
-```mermaid
-flowchart LR
   classDef good fill:#dcfce7,stroke:#166534,color:#111827,stroke-width:2px
-  classDef q fill:#dbeafe,stroke:#1d4ed8,color:#111827,stroke-width:2px
 
-  Q2[Mitigated retrieval:<br>rewrite/transform query first]:::q --> H[Representation closer to evidence shape]:::good
-  H --> W2[Top-k matches author/title rows]:::good
-  W2 --> D2[(Higher recall for list questions)]:::good
+  Q[Query embedding]:::q --> B[Top-k misses key rows]:::bad
+  Q --> H[HyDE]:::good
+  H --> R[Better retrieval alignment]:::good
 ```
+
+<div class="mt-2 p-2 rounded bg-emerald-50 border border-emerald-200 text-emerald-900 text-sm leading-snug">
+<b>HyDE (Hypothetical Document Embeddings) as solution:</b> generate a short hypothetical answer first, embed that text, then retrieve.
+This often brings retrieval closer to evidence-shaped chunks.
+</div>
 
 ---
 layout: default
@@ -336,21 +350,23 @@ flowchart LR
 ```
 
 ---
-layout: two-cols
+layout: two-cols-header
 ---
 
 # Routing in Action: The Dual Path
 
 How the system behaves under the hood based on the classifier's decision.
 
+::left::
+
 Route A: Content (RAG)
 
 Query: "What is the mechanism of Queuosine?"
 
-- Retrieval: Vector Database.
-- Search Space: 50,000 chunks.
-- Method: Hybrid Search (Cosine Similarity + BM25).
-- Output: Top 10 chunks containing specific abstracts/methods.
+- Retrieval: Vector Database
+- Search space: 50,000 chunks
+- Method: Hybrid Search (Cosine Similarity + BM25)
+- Output: Top 10 chunks containing specific abstracts/methods
 
 ::right::
 
@@ -358,10 +374,12 @@ Route B: Metadata (GraphQL)
 
 Query: "Which papers did Mark Helm publish?"
 
-- Parameter Extraction: `{"author": "Mark Helm"}`
-- Retrieval: Python Code Node.
-- Method: Deterministic database query.
-- Output:
+- Parameter extraction: author = "Mark Helm"
+- Retrieval: Python Code Node
+- Method: Deterministic database query
+- Output: title, year
+
+<Transform :scale="0.82" origin="top left">
 
 ```graphql
 {
@@ -379,6 +397,8 @@ Query: "Which papers did Mark Helm publish?"
   }
 }
 ```
+
+</Transform>
 
 
 ---
@@ -547,7 +567,9 @@ layout: default
 
 # Full Chatbot Flow (Simplified)
 
-<img src="/chatbot_mermaid.png" class="mx-auto max-h-[72vh] object-contain" />
+<div class="h-[calc(100vh-220px)] w-full flex items-start justify-center overflow-hidden">
+  <img src="/chatbot_mermaid.png" class="h-full w-auto object-contain" />
+</div>
 
 ---
 layout: default
@@ -561,14 +583,15 @@ layout: default
   <img src="/chatbot_dify.png" class="h-full w-auto object-contain rounded-md" />
 </div>
 
+
 ---
 layout: default
 ---
 
-# Why Graph + Graph Retrieval Changes the Game
+# Why GraphRAG Changes the Game
 
 <div class="text-sm text-sky-200 mb-2">
-One model for both question families: semantic content questions and strict metadata questions.
+Moving from fragile text-chunk guessing to deterministic, multi-hop semantic reasoning.
 </div>
 
 ```mermaid
@@ -578,78 +601,57 @@ flowchart LR
   classDef g fill:#dcfce7,stroke:#166534,color:#111827,stroke-width:2px
   classDef out fill:#e0e7ff,stroke:#4338ca,color:#111827,stroke-width:2px
 
-  U[User query]:::q --> I[Intent + entity extraction]:::step
-  I --> S[Seed nodes: author year topic paper]:::step
-  S --> G[Graph retrieval: constrained 1-2 hop expansion]:::g
-  G --> E[Evidence subgraph with provenance paths]:::g
-  E --> A[Answer synthesis with citations]:::out
+  U[User Query]:::q --> I[NLU: Entity Extraction<br>& Semantic Grounding]:::step
+  I --> S[Seed Nodes<br>e.g., Author X, Gene Y]:::step
+  S --> G[Graph Traversal<br>Find paths via shared concepts]:::g
+  G --> E[Evidence Subgraph<br>Connected cross-document path]:::g
+  E --> A[Answer Generation<br>with 100% Traceability]:::out
 ```
 
-<div class="grid grid-cols-2 gap-4 mt-3 text-sm">
+<div class="kg-rag-slide16 grid grid-cols-2 gap-4 mt-3 text-sm">
   <div class="rounded-md border border-rose-200 bg-rose-50 text-rose-900 p-3">
-    <b>Before:</b> Top-k chunk guessing<br>
-    Missed links, weak recall, hard to explain why a chunk was chosen.
+    <b>The Vector-RAG Flaw:</b> Top-K chunk guessing.<br>
+    The system blindly retrieves text snippets based on similarity. It cannot connect latent concepts across isolated documents. Complex multi-document synthesis requires brute-force Map-Reduce loops.
   </div>
   <div class="rounded-md border border-emerald-200 bg-emerald-50 text-emerald-900 p-3">
-    <b>With Graph Retrieval:</b> explicit relations<br>
-    Deterministic filters + relational hops + traceable evidence paths.
+    <b>The GraphRAG Solution:</b> Explicit relational reasoning.<br>
+    We ground entities as graph <b>Seeds</b> and follow semantic <b>Hops</b> (e.g., <code>Paper A &rarr; [Gene] &larr; Paper B</code>). This deterministically bridges isolated texts, enabling true discovery without guessing.
   </div>
 </div>
 
 ---
-layout: two-cols
+layout: default
 ---
 
-# One Graph, Two Powerful Modes
+# One Unified Graph, Two Query Modes
+<div class="kg-rag-slide mt-3 grid grid-cols-2 gap-4 items-start">
+  <div class="text-[0.82rem] leading-snug rounded-md border border-cyan-200 bg-cyan-50 text-cyan-900 p-3">
+    <div class="font-semibold mb-2">Mode A: Semantic Concept Hopping (GraphRAG)</div>
+    <p><strong>Query:</strong> "How does the pathway described by Helm connect to the clinical outcomes in Dieterich's recent trial?"</p>
+    <ul class="list-disc pl-5 mt-1 space-y-1">
+      <li><b>The Graph Hop:</b> The LLM extracts entities: `Helm`, `Dieterich`.</li>
+      <li><b>Traversal Path:</b> `[Author: Helm] -[:WROTE]-> [Paper A] -[:MENTIONS_GENE]-> [Gene: MettL1] <-[:TARGETS_GENE]- [Paper B] <-[:WROTE]- [Author: Dieterich]`</li>
+      <li><strong>Output:</strong> The system retrieves the exact chunks where the two papers intersect via the shared semantic concept (MettL1), creating new knowledge across isolated documents.</li>
+    </ul>
+  </div>
 
-Content question (semantic + relational)
-
-<div class="text-[0.86rem] leading-snug">
-<b>Query:</b> "How do Helm papers describe queuosine detection?"<br>
-1. Seed: <b>Author=Mark Helm</b>, <b>Topic=queuosine</b><br>
-2. Topic enters graph during ingestion: keyword/NER mapping -> <b>Topic</b> node<br>
-3. Traverse: Author -> Paper -> Section -> Chunk and Chunk -> MENTIONS_METHOD -> Method
-
-<div class="mt-2 p-2 rounded bg-slate-100 border border-slate-300 text-slate-900 text-[0.66rem] leading-tight font-mono">
-Author -> Paper -> HAS_TOPIC -> Topic(queuosine)<br>
-Paper -> Section -> Chunk -> MENTIONS_METHOD -> Method
+  <div class="text-[0.82rem] leading-snug rounded-md border border-indigo-200 bg-indigo-50 text-indigo-900 p-3">
+    <div class="font-semibold mb-2">Mode B: Strict Metadata Lookup (Pure Graph Traversal)</div>
+    <p><strong>Query:</strong> "Which papers did Mark Helm publish in 2025?"</p>
+    <ul class="list-disc pl-5 mt-1 space-y-1">
+      <li><b>Direct Execution:</b> No semantic text retrieval needed at all.</li>
+      <li><b>Deterministic Filters:</b> Translate query directly into a Cypher graph query.</li>
+      <li><b>The Hop Path:</b><span class="query-code">MATCH (a:Author {name: 'Helm'})-[:WROTE]-&gt;(p:Paper {year: 2025}) RETURN p.title</span></li>
+      <li><strong>Output:</strong> 100% accurate, hallucination-free list, bypassing any Top-K vector limits or complex Map-Reduce loops.</li>
+    </ul>
+  </div>
 </div>
 
-<div class="mt-2 p-2 rounded bg-cyan-50 border border-cyan-200 text-cyan-900 text-[0.8rem]">
-Method is a normalized concept node; Chunk remains the raw evidence text with provenance.
-</div>
-</div>
-
-::right::
-
-GraphQL retrieval examples (same graph)
-
-<div class="text-[0.8rem] leading-snug">
-<b>Similarity + constraints:</b> semantic search + metadata filters.
+<div class="mt-3 rounded-md border border-emerald-200 bg-emerald-50 text-emerald-900 p-3 text-[0.8rem] leading-snug">
+  <div class="font-semibold mb-1">The True Power of GraphRAG</div>
+  <div>While Dify's Vector-RAG can handle simple metadata filters (e.g., `WHERE author="Helm"`), it cannot discover <b>latent relationships</b> across isolated documents. GraphRAG connects texts via shared semantic nodes (Genes, Diseases, Methods), enabling true cross-document reasoning.</div>
 </div>
 
-```graphql
-{
-  Get {
-    Chunk(
-      hybrid: { query: "queuosine detection", alpha: 0.6 }
-      where: { operator: And, operands: [
-        { path: ["paper","authors"], operator: Like, valueText: "*Mark Helm*" },
-        { path: ["paper","topics"], operator: Like, valueText: "*queuosine*" }
-      ] }
-      limit: 5
-    ) {
-      text
-      paper { title year }
-      _additional { score }
-    }
-  }
-}
-```
-
-<div class="mt-1 p-2 rounded bg-indigo-50 border border-indigo-200 text-indigo-900 text-[0.74rem] leading-snug">
-Same graph also supports strict metadata mode (author/year/journal filters).
-</div>
 
 ---
 layout: default
@@ -680,7 +682,6 @@ layout: default
 From retrieval heuristics to knowledge-aware reasoning.
 </div>
 
-
 ---
 layout: center
 class: text-center
@@ -689,3 +690,4 @@ class: text-center
 # Thank You
 
 Questions? (Live demo available at rmap-chatbot-demo-dify.internal)
+
