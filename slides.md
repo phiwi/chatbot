@@ -160,12 +160,14 @@ drawings:
 }
 
 /* Slide 16: high-contrast inline code in explanatory cards. */
-.kg-rag-slide16 code {
-  background: #e2e8f0;
-  color: #0f172a;
+.kg-rag-slide16 code,
+.kg-rag-slide16 code span {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
   padding: 0.05rem 0.28rem;
   border-radius: 0.25rem;
   border: 1px solid #cbd5e1;
+  text-shadow: none !important;
 }
 </style>
 
@@ -379,7 +381,7 @@ Query: "Which papers did Mark Helm publish?"
 - Method: Deterministic database query
 - Output: title, year
 
-<Transform :scale="0.82" origin="top left">
+<Transform :scale="0.74" origin="top left">
 
 ```graphql
 {
@@ -568,7 +570,7 @@ layout: default
 # Full Chatbot Flow (Simplified)
 
 <div class="h-[calc(100vh-220px)] w-full flex items-start justify-center overflow-hidden">
-  <img src="/chatbot_mermaid.png" class="h-full w-auto object-contain" />
+  <img src="/chatbot_mermaid.png" class="h-[80%] w-auto object-contain" />
 </div>
 
 ---
@@ -689,5 +691,12 @@ class: text-center
 
 # Thank You
 
-Questions? (Live demo available at rmap-chatbot-demo-dify.internal)
+Questions?
+
+<div class="mt-3 text-base">
+  Live demo:
+  <a href="https://rmap-chatbot-demo-dify.internal" target="_blank" rel="noopener noreferrer" class="font-semibold text-cyan-300 underline decoration-2 underline-offset-4 hover:text-cyan-200">
+    rmap-chatbot-demo-dify.internal
+  </a>
+</div>
 
