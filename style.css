@@ -2,3 +2,19 @@
 #slidev-goto-dialog:not(.top-5) {
   display: none !important;
 }
+
+/* Force a true dark canvas across all slides, independent of theme defaults. */
+:root {
+  color-scheme: dark;
+}
+
+.slidev-layout,
+.slidev-layout::before,
+.slidev-layout::after,
+#slide-container {
+  background-color: #000 !important;
+}
+
+.slidev-layout {
+  color: #e5e7eb;
+}

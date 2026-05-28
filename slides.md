@@ -1,6 +1,7 @@
 ---
 theme: seriph
-background: https://source.unsplash.com/collection/94734566/1920x1080
+colorSchema: dark
+background: '#000000'
 class: text-center
 highlighter: shiki
 lineNumbers: false
@@ -13,12 +14,162 @@ drawings:
 title: Beyond "LLM In / LLM Out"
 ---
 
-# Beyond "LLM In / LLM Out"
+<style>
+.hero-chat-slide {
+  position: relative;
+  min-height: calc(100vh - 96px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
 
-Architecting a Sovereign Chatbot for the NUM / RMaP Consortium
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 85%;
+}
 
-<div class="abs-br m-6 flex gap-2">
- Philipp Wiesenbach | Dieterich Lab | June 2026
+.hero-content h1 {
+  font-size: 2.8rem;
+  line-height: 1.05;
+  margin-bottom: 0.7rem;
+}
+
+.hero-content p {
+  font-size: 1.15rem;
+  opacity: 0.95;
+}
+
+.chat-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.chat-stream {
+  position: absolute;
+  left: 2.5%;
+  right: 2.5%;
+}
+
+.chat-stream.left {
+  text-align: left;
+}
+
+.chat-stream.right {
+  text-align: right;
+}
+
+.chat-line {
+  display: inline-block;
+  position: relative;
+  max-width: none;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.01em;
+  color: rgba(191, 219, 254, 0.3);
+  white-space: nowrap;
+  overflow: hidden;
+  width: 0;
+  border-right: 1px solid rgba(191, 219, 254, 0.78);
+  animation: typeErase 15.6s steps(120, end) infinite;
+}
+
+.chat-line::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 8%;
+  width: 1.4ch;
+  height: 84%;
+  background: radial-gradient(circle at 35% 50%, rgba(191, 219, 254, 0.58), rgba(191, 219, 254, 0));
+  filter: blur(1.8px);
+  opacity: 0.82;
+  animation: glowPulse 0.9s ease-in-out infinite;
+}
+
+.chat-line.alt {
+  color: rgba(110, 231, 183, 0.28);
+  border-right-color: rgba(110, 231, 183, 0.78);
+}
+
+.chat-line.alt::before {
+  background: radial-gradient(circle at 35% 50%, rgba(110, 231, 183, 0.56), rgba(110, 231, 183, 0));
+}
+
+@keyframes typeErase {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  36% {
+    width: calc(var(--chars, 80) * 1ch);
+    opacity: 1;
+  }
+  58% {
+    width: calc(var(--chars, 80) * 1ch);
+    opacity: 0.95;
+  }
+  88% {
+    width: 0;
+    opacity: 0.9;
+  }
+  100% {
+    width: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes caretBlink {
+  0%, 45% { opacity: 0.95; }
+  46%, 100% { opacity: 0.25; }
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.92; }
+}
+</style>
+
+<div class="hero-chat-slide">
+  <div class="chat-bg">
+    <div class="chat-stream left" style="top:8%;">
+      <span class="chat-line" style="animation-delay:0s; --chars:108;">User: Which papers did Mark Helm publish in 2025, and can you list journals and years in a compact table?</span>
+    </div>
+    <div class="chat-stream right" style="top:16%;">
+      <span class="chat-line alt" style="animation-delay:1.4s; --chars:121;">Assistant: Applying deterministic author and year filters, then validating journal metadata before response generation...</span>
+    </div>
+    <div class="chat-stream left" style="top:24%;">
+      <span class="chat-line" style="animation-delay:2.7s; --chars:109;">User: Please summarize them and compare methods, limitations, and sequencing setup differences across papers.</span>
+    </div>
+    <div class="chat-stream right" style="top:32%;">
+      <span class="chat-line alt" style="animation-delay:4.1s; --chars:104;">Assistant: Rewritten with memory: summarize Paper A, Paper B, Paper C, and Paper D in requested order.</span>
+    </div>
+    <div class="chat-stream left" style="top:64%;">
+      <span class="chat-line" style="animation-delay:5.3s; --chars:122;">System: Iterative retrieval started with per-paper metadata filters, constrained top-k context, and map-reduce aggregation.</span>
+    </div>
+    <div class="chat-stream right" style="top:72%;">
+      <span class="chat-line alt" style="animation-delay:6.8s; --chars:122;">Assistant: Map phase complete for all requested papers. Running reduce synthesis with strict no-hallucination guardrails...</span>
+    </div>
+    <div class="chat-stream left" style="top:80%;">
+      <span class="chat-line" style="animation-delay:8.2s; --chars:114;">User: Show only Nucleic Acids Res entries from 2025, and keep only exact metadata matches in the final list.</span>
+    </div>
+  </div>
+
+  <div class="hero-content">
+    <h1>Beyond "LLM In / LLM Out"</h1>
+    <p>Architecting a Sovereign Chatbot for the NUM / RMaP Consortium</p>
+  </div>
+
+  <div class="abs-br m-6 flex gap-2 z-10">
+    Philipp Wiesenbach | Dieterich Lab | June 2026
+  </div>
 </div>
 
 ---
@@ -76,7 +227,7 @@ If Mark Helm wrote 25 papers, but Top-K is set to 5, the LLM literally cannot se
 layout: default
 ---
 
-# Similarity Trap: Question != Answer
+# Similarity Trap: Question != Evidence Wording
 
 <div class="text-left text-sm leading-snug">
 <b>Observation:</b> the wording of a question is often unlike the wording of the best evidence chunk.
@@ -92,7 +243,11 @@ layout: default
 <b>Consequence:</b> pure query-embedding can rank semantically plausible but operationally wrong chunks too high.
 
 <div class="mt-3 p-2 rounded bg-emerald-50 border border-emerald-200 text-emerald-900">
-<b>HyDE hint:</b> Generate a short hypothetical answer first, embed that text, then retrieve. This shifts search toward answer-shaped evidence.
+<b>Important:</b> HyDE is one possible trick to improve semantic retrieval alignment, not a mandatory component.
+</div>
+
+<div class="mt-2 p-2 rounded bg-sky-50 border border-sky-200 text-sky-900">
+<b>Our project choice:</b> Query Rewriter + structured metadata-aware routing (instead of HyDE) to make queries retrieval-ready.
 </div>
 </div>
 
@@ -101,7 +256,7 @@ flowchart LR
   classDef bad fill:#fee2e2,stroke:#991b1b,color:#111827,stroke-width:2px
   classDef q fill:#dbeafe,stroke:#1d4ed8,color:#111827,stroke-width:2px
 
-  Q1[Without HyDE:<br>Embed user query]:::q --> W1[Top-k mostly topical chunks]:::bad
+  Q1[Naive query embedding]:::q --> W1[Top-k mostly topical chunks]:::bad
   W1 --> D1[(Misses key bibliography rows)]:::bad
 ```
 
@@ -110,7 +265,7 @@ flowchart LR
   classDef good fill:#dcfce7,stroke:#166534,color:#111827,stroke-width:2px
   classDef q fill:#dbeafe,stroke:#1d4ed8,color:#111827,stroke-width:2px
 
-  Q2[With HyDE:<br>Query -> hypothetical answer]:::q --> H[Embed hypothetical answer]:::good
+  Q2[Mitigated retrieval:<br>rewrite/transform query first]:::q --> H[Representation closer to evidence shape]:::good
   H --> W2[Top-k matches author/title rows]:::good
   W2 --> D2[(Higher recall for list questions)]:::good
 ```
@@ -402,7 +557,99 @@ layout: default
 
 <div class="text-sky-200 text-sm mb-2">Production view in Dify (complex workflow, condensed in the previous architecture slide)</div>
 
-<img src="/chatbot_dify.png" class="mx-auto max-h-[72vh] object-contain rounded-md" />
+<div class="h-[calc(100vh-220px)] w-full flex items-start justify-center overflow-hidden">
+  <img src="/chatbot_dify.png" class="h-full w-auto object-contain rounded-md" />
+</div>
+
+---
+layout: default
+---
+
+# Why Graph + Graph Retrieval Changes the Game
+
+<div class="text-sm text-sky-200 mb-2">
+One model for both question families: semantic content questions and strict metadata questions.
+</div>
+
+```mermaid
+flowchart LR
+  classDef q fill:#dbeafe,stroke:#1d4ed8,color:#111827,stroke-width:2px
+  classDef step fill:#fef3c7,stroke:#b45309,color:#111827,stroke-width:2px
+  classDef g fill:#dcfce7,stroke:#166534,color:#111827,stroke-width:2px
+  classDef out fill:#e0e7ff,stroke:#4338ca,color:#111827,stroke-width:2px
+
+  U[User query]:::q --> I[Intent + entity extraction]:::step
+  I --> S[Seed nodes: author year topic paper]:::step
+  S --> G[Graph retrieval: constrained 1-2 hop expansion]:::g
+  G --> E[Evidence subgraph with provenance paths]:::g
+  E --> A[Answer synthesis with citations]:::out
+```
+
+<div class="grid grid-cols-2 gap-4 mt-3 text-sm">
+  <div class="rounded-md border border-rose-200 bg-rose-50 text-rose-900 p-3">
+    <b>Before:</b> Top-k chunk guessing<br>
+    Missed links, weak recall, hard to explain why a chunk was chosen.
+  </div>
+  <div class="rounded-md border border-emerald-200 bg-emerald-50 text-emerald-900 p-3">
+    <b>With Graph Retrieval:</b> explicit relations<br>
+    Deterministic filters + relational hops + traceable evidence paths.
+  </div>
+</div>
+
+---
+layout: two-cols
+---
+
+# One Graph, Two Powerful Modes
+
+Content question (semantic + relational)
+
+<div class="text-[0.86rem] leading-snug">
+<b>Query:</b> "How do Helm papers describe queuosine detection?"<br>
+1. Seed: <b>Author=Mark Helm</b>, <b>Topic=queuosine</b><br>
+2. Topic enters graph during ingestion: keyword/NER mapping -> <b>Topic</b> node<br>
+3. Traverse: Author -> Paper -> Section -> Chunk and Chunk -> MENTIONS_METHOD -> Method
+
+<div class="mt-2 p-2 rounded bg-slate-100 border border-slate-300 text-slate-900 text-[0.66rem] leading-tight font-mono">
+Author -> Paper -> HAS_TOPIC -> Topic(queuosine)<br>
+Paper -> Section -> Chunk -> MENTIONS_METHOD -> Method
+</div>
+
+<div class="mt-2 p-2 rounded bg-cyan-50 border border-cyan-200 text-cyan-900 text-[0.8rem]">
+Method is a normalized concept node; Chunk remains the raw evidence text with provenance.
+</div>
+</div>
+
+::right::
+
+GraphQL retrieval examples (same graph)
+
+<div class="text-[0.8rem] leading-snug">
+<b>Similarity + constraints:</b> semantic search + metadata filters.
+</div>
+
+```graphql
+{
+  Get {
+    Chunk(
+      hybrid: { query: "queuosine detection", alpha: 0.6 }
+      where: { operator: And, operands: [
+        { path: ["paper","authors"], operator: Like, valueText: "*Mark Helm*" },
+        { path: ["paper","topics"], operator: Like, valueText: "*queuosine*" }
+      ] }
+      limit: 5
+    ) {
+      text
+      paper { title year }
+      _additional { score }
+    }
+  }
+}
+```
+
+<div class="mt-1 p-2 rounded bg-indigo-50 border border-indigo-200 text-indigo-900 text-[0.74rem] leading-snug">
+Same graph also supports strict metadata mode (author/year/journal filters).
+</div>
 
 ---
 layout: default
@@ -410,18 +657,28 @@ layout: default
 
 # Lessons Learned & What's Next
 
-Key takeaways for AI engineering in healthcare:
+<div class="grid grid-cols-2 gap-4 mt-3">
+  <div class="rounded-md border border-sky-200 bg-sky-50 text-sky-900 p-4">
+    <div class="font-bold mb-2">What Worked</div>
+    <ul class="text-sm leading-snug">
+      <li>Parsing quality first: bad extraction breaks everything downstream.</li>
+      <li>Hard metadata constraints: better precision, fewer hallucinations.</li>
+      <li>Structured orchestration: rewrite, route, retrieve, then synthesize.</li>
+    </ul>
+  </div>
+  <div class="rounded-md border border-emerald-200 bg-emerald-50 text-emerald-900 p-4">
+    <div class="font-bold mb-2">Where We Go Next</div>
+    <ul class="text-sm leading-snug">
+      <li>Current map-reduce is robust, but expensive at scale.</li>
+      <li>Next step: GraphRAG with Neo4j for deterministic multi-hop reasoning.</li>
+      <li>Target: production bridge to NUM-ENRICH (CardioGuidelinesGraph).</li>
+    </ul>
+  </div>
+</div>
 
-1.  Garbage In, Garbage Out: Poor PDF parsing (double columns, images) destroys
-    RAG. We implemented robust text/metadata extraction prior to upload.
-2.  Metadata is king: Vector search without hard metadata filters is a gamble.
-3.  Guardrails are essential: Hard negative prompting is required to suppress
-    the LLM's helpfulness bias.
-
-What's next (the bridge to NUM-ENRICH):
-
-- The current Map-Reduce flow is powerful but computationally expensive.
-- The Future is GraphRAG: Moving from flat vectors to Neo4j. Connecting authors, papers, and clinical cohorts natively in a graph enables deterministic, multi-hop reasoning without complex iteration loops or expensive query rewriting. (Sneak peek: CardioGuidelinesGraph)
+<div class="mt-4 text-center text-lg font-semibold text-slate-100">
+From retrieval heuristics to knowledge-aware reasoning.
+</div>
 
 
 ---
