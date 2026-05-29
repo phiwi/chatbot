@@ -433,7 +433,7 @@ layout: default
 # Full Chatbot Flow (Simplified)
 
 <div class="h-[calc(100vh-220px)] w-full flex items-start justify-center overflow-hidden">
-  <img src="/chatbot_mermaid.png" class="h-[80%] w-auto object-contain" />
+  <img src="/chatbot_mermaid.png" class="h-[64%] w-auto object-contain" />
 </div>
 
 ---
@@ -442,10 +442,10 @@ layout: default
 
 # The Reality
 
-<div class="text-sky-200 text-sm mb-2">Production view in Dify (complex workflow, condensed in the previous architecture slide)</div>
+<div class="text-sky-200 text-sm mb-0.5">Production view in Dify (complex workflow, condensed in the previous architecture slide)</div>
 
-<div class="h-[calc(100vh-220px)] w-full flex items-start justify-center overflow-hidden">
-  <img src="/chatbot_dify.png" class="h-full w-auto object-contain rounded-md" />
+<div class="w-full flex justify-center mt-1 overflow-hidden">
+  <img src="/chatbot_dify.png" class="block max-h-[68vh] w-auto object-contain rounded-md" />
 </div>
 
 
