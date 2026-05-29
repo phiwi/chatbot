@@ -13,191 +13,54 @@ drawings:
   persist: false
 ---
 
-<style>
-.hero-chat-slide {
-  position: relative;
-  min-height: calc(100vh - 96px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  max-width: 85%;
-}
-
-.hero-content h1 {
-  font-size: 2.8rem;
-  line-height: 1.05;
-  margin-bottom: 0.7rem;
-}
-
-.hero-content p {
-  font-size: 1.15rem;
-  opacity: 0.95;
-}
-
-.chat-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.chat-stream {
-  position: absolute;
-  left: 2.5%;
-  right: 2.5%;
-}
-
-.chat-stream.left {
-  text-align: left;
-}
-
-.chat-stream.right {
-  text-align: right;
-}
-
-.chat-line {
-  display: inline-block;
-  position: relative;
-  max-width: none;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.8rem;
-  letter-spacing: 0.01em;
-  color: rgba(191, 219, 254, 0.3);
-  white-space: nowrap;
-  overflow: hidden;
-  width: 0;
-  border-right: 1px solid rgba(191, 219, 254, 0.78);
-  animation: typeErase 15.6s steps(120, end) infinite;
-}
-
-.chat-line::before {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 8%;
-  width: 1.4ch;
-  height: 84%;
-  background: radial-gradient(circle at 35% 50%, rgba(191, 219, 254, 0.58), rgba(191, 219, 254, 0));
-  filter: blur(1.8px);
-  opacity: 0.82;
-  animation: glowPulse 0.9s ease-in-out infinite;
-}
-
-.chat-line.alt {
-  color: rgba(110, 231, 183, 0.28);
-  border-right-color: rgba(110, 231, 183, 0.78);
-}
-
-.chat-line.alt::before {
-  background: radial-gradient(circle at 35% 50%, rgba(110, 231, 183, 0.56), rgba(110, 231, 183, 0));
-}
-
-@keyframes typeErase {
-  0% {
-    width: 0;
-    opacity: 0;
-  }
-  8% {
-    opacity: 1;
-  }
-  36% {
-    width: calc(var(--chars, 80) * 1ch);
-    opacity: 1;
-  }
-  58% {
-    width: calc(var(--chars, 80) * 1ch);
-    opacity: 0.95;
-  }
-  88% {
-    width: 0;
-    opacity: 0.9;
-  }
-  100% {
-    width: 0;
-    opacity: 0;
-  }
-}
-
-@keyframes caretBlink {
-  0%, 45% { opacity: 0.95; }
-  46%, 100% { opacity: 0.25; }
-}
-
-@keyframes glowPulse {
-  0%, 100% { opacity: 0.55; }
-  50% { opacity: 0.92; }
-}
-
-/* Slide 17: high-contrast inline/query code for readability inside colored cards. */
-.kg-rag-slide code {
-  background: #e2e8f0;
-  color: #0f172a;
-  padding: 0.05rem 0.28rem;
-  border-radius: 0.25rem;
-  border: 1px solid #cbd5e1;
-}
-
-.kg-rag-slide .query-code {
-  display: block;
-  margin-top: 0.35rem;
-  background: #f8fafc;
-  color: #0f172a;
-  border: 1px solid #cbd5e1;
-  border-radius: 0.35rem;
-  padding: 0.35rem 0.45rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.72rem;
-  line-height: 1.25;
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-
-/* Slide 16: high-contrast inline code in explanatory cards. */
-.kg-rag-slide16 code,
-.kg-rag-slide16 code span {
-  background: #e2e8f0 !important;
-  color: #0f172a !important;
-  padding: 0.05rem 0.28rem;
-  border-radius: 0.25rem;
-  border: 1px solid #cbd5e1;
-  text-shadow: none !important;
-}
-</style>
-
 <div class="hero-chat-slide">
+  <div class="hero-atmosphere"></div>
+  <div class="hero-grain"></div>
   <div class="chat-bg">
     <div class="chat-stream left" style="top:8%;">
-      <span class="chat-line" style="animation-delay:0s; --chars:108;">User: Which papers did Mark Helm publish in 2025, and can you list journals and years in a compact table?</span>
+      <TypewriterCorrectionLine
+        prefix="User: Which papers did Mark Helm "
+        wrongWord="pubslish"
+        correctWord="publish"
+        suffix=" in 2025, and can you list journals and years in a compact table?"
+        :startDelay="0"
+      />
     </div>
     <div class="chat-stream right" style="top:16%;">
-      <span class="chat-line alt" style="animation-delay:1.4s; --chars:121;">Assistant: Applying deterministic author and year filters, then validating journal metadata before response generation...</span>
+      <span class="chat-line alt" style="animation-delay:1.9s; --dur:16.2s; --chars:123;">Assistant: Applying deterministic author and year filters, pausing for metadata checks, then validating journal fields before response generation...</span>
     </div>
     <div class="chat-stream left" style="top:24%;">
-      <span class="chat-line" style="animation-delay:2.7s; --chars:109;">User: Please summarize them and compare methods, limitations, and sequencing setup differences across papers.</span>
+      <TypewriterCorrectionLine
+        prefix="User: Please summarize them - sorry, all four papers - and compare methods, limitations, and sequencing setup "
+        wrongWord="diferrences"
+        correctWord="differences"
+        suffix="."
+        :startDelay="3500"
+      />
     </div>
     <div class="chat-stream right" style="top:32%;">
-      <span class="chat-line alt" style="animation-delay:4.1s; --chars:104;">Assistant: Rewritten with memory: summarize Paper A, Paper B, Paper C, and Paper D in requested order.</span>
+      <span class="chat-line alt" style="animation-delay:5.7s; --dur:15.4s; --chars:117;">Assistant: Rewritten using conversation memory: summarize Paper A, Paper B, Paper C, and Paper D in the requested order.</span>
     </div>
     <div class="chat-stream left" style="top:64%;">
-      <span class="chat-line" style="animation-delay:5.3s; --chars:122;">System: Iterative retrieval started with per-paper metadata filters, constrained top-k context, and map-reduce aggregation.</span>
+      <span class="chat-line" style="animation-delay:8.8s; --dur:19.1s; --chars:125;">System: Iterative retrieval started with per-paper metadata filters, constrained top-k context, and map-reduce aggregation.</span>
     </div>
     <div class="chat-stream right" style="top:72%;">
-      <span class="chat-line alt" style="animation-delay:6.8s; --chars:122;">Assistant: Map phase complete for all requested papers. Running reduce synthesis with strict no-hallucination guardrails...</span>
+      <span class="chat-line alt" style="animation-delay:11.2s; --dur:16.7s; --chars:124;">Assistant: Map phase complete for all requested papers. Running reduce synthesis with strict no-hallucination guardrails...</span>
     </div>
     <div class="chat-stream left" style="top:80%;">
-      <span class="chat-line" style="animation-delay:8.2s; --chars:114;">User: Show only Nucleic Acids Res entries from 2025, and keep only exact metadata matches in the final list.</span>
+      <TypewriterCorrectionLine
+        prefix="User: Show only Nucleic Acids "
+        wrongWord="Reserach"
+        correctWord="Research"
+        suffix=" entries from 2025, and keep only exact metadata matches in the final list."
+        :startDelay="14600"
+      />
     </div>
   </div>
 
   <div class="hero-content">
     <h1>Beyond "LLM In / LLM Out"</h1>
+    <div class="hero-accent"></div>
     <p>Architecting a Sovereign Chatbot for the NUM / RMaP Consortium</p>
   </div>
 

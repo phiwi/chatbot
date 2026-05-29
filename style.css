@@ -18,3 +18,247 @@
 .slidev-layout {
   color: #e5e7eb;
 }
+
+.hero-chat-slide {
+  position: relative;
+  min-height: calc(100vh - 96px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.hero-atmosphere {
+  position: absolute;
+  inset: -12% -8% -10% -8%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(40% 45% at 22% 26%, rgba(56, 189, 248, 0.2), rgba(56, 189, 248, 0)),
+    radial-gradient(36% 42% at 78% 32%, rgba(16, 185, 129, 0.16), rgba(16, 185, 129, 0)),
+    radial-gradient(44% 36% at 50% 82%, rgba(56, 189, 248, 0.08), rgba(56, 189, 248, 0));
+  filter: blur(12px);
+  animation: atmosphereDrift 14s ease-in-out infinite alternate;
+}
+
+.hero-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.08;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.22) 0.5px, transparent 0.5px),
+    radial-gradient(rgba(255, 255, 255, 0.15) 0.5px, transparent 0.5px);
+  background-size: 3px 3px, 4px 4px;
+  background-position: 0 0, 1px 1px;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  max-width: min(1020px, 92%);
+  padding: 0;
+  animation: heroRise 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-content h1 {
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  line-height: 1.05;
+  margin: 0 0 0.28rem;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  background: linear-gradient(100deg, #f8fafc 14%, #bae6fd 52%, #a7f3d0 88%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 10px 26px rgba(8, 47, 73, 0.32);
+  animation: heroRise 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 90ms;
+}
+
+.hero-accent {
+  width: clamp(160px, 28vw, 320px);
+  height: 2px;
+  margin: 0.32rem auto 0.5rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(125, 211, 252, 0), rgba(125, 211, 252, 0.95), rgba(110, 231, 183, 0.9), rgba(110, 231, 183, 0));
+  transform-origin: center;
+  animation: accentReveal 780ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 210ms;
+}
+
+.hero-content p {
+  font-size: clamp(0.98rem, 2.1vw, 1.18rem);
+  margin: 0;
+  opacity: 0.98;
+  color: #dbeafe;
+  animation: heroRise 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 300ms;
+}
+
+.chat-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.chat-stream {
+  position: absolute;
+  left: 2.5%;
+  right: 2.5%;
+}
+
+.chat-stream.left {
+  text-align: left;
+}
+
+.chat-stream.right {
+  text-align: right;
+}
+
+.chat-line {
+  display: inline-block;
+  position: relative;
+  max-width: none;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.01em;
+  color: rgba(191, 219, 254, 0.3);
+  white-space: nowrap;
+  overflow: hidden;
+  width: 0;
+  border-right: 1px solid rgba(191, 219, 254, 0.78);
+  animation: typeErase var(--dur, 15.6s) steps(120, end) infinite;
+}
+
+.chat-line::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 8%;
+  width: 1.4ch;
+  height: 84%;
+  background: radial-gradient(circle at 35% 50%, rgba(191, 219, 254, 0.58), rgba(191, 219, 254, 0));
+  filter: blur(1.8px);
+  opacity: 0.82;
+  animation: glowPulse 0.9s ease-in-out infinite;
+}
+
+.chat-line.alt {
+  color: rgba(110, 231, 183, 0.28);
+  border-right-color: rgba(110, 231, 183, 0.78);
+}
+
+.chat-line.alt::before {
+  background: radial-gradient(circle at 35% 50%, rgba(110, 231, 183, 0.56), rgba(110, 231, 183, 0));
+}
+
+.chat-line.dynamic {
+  width: auto;
+  opacity: 1;
+  animation: none;
+}
+
+@keyframes typeErase {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  36% {
+    width: calc(var(--chars, 80) * 1ch);
+    opacity: 1;
+  }
+  58% {
+    width: calc(var(--chars, 80) * 1ch);
+    opacity: 0.95;
+  }
+  88% {
+    width: 0;
+    opacity: 0.9;
+  }
+  100% {
+    width: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.92; }
+}
+
+@keyframes atmosphereDrift {
+  0% {
+    transform: translate3d(-0.8%, 0, 0) scale(1);
+    opacity: 0.92;
+  }
+  100% {
+    transform: translate3d(1.2%, -1.2%, 0) scale(1.04);
+    opacity: 1;
+  }
+}
+
+@keyframes heroRise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes accentReveal {
+  from {
+    opacity: 0;
+    transform: scaleX(0.15);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+/* Slide 17: high-contrast inline/query code for readability inside colored cards. */
+.kg-rag-slide code {
+  background: #e2e8f0;
+  color: #0f172a;
+  padding: 0.05rem 0.28rem;
+  border-radius: 0.25rem;
+  border: 1px solid #cbd5e1;
+}
+
+.kg-rag-slide .query-code {
+  display: block;
+  margin-top: 0.35rem;
+  background: #f8fafc;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.35rem;
+  padding: 0.35rem 0.45rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.72rem;
+  line-height: 1.25;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Slide 16: high-contrast inline code in explanatory cards. */
+.kg-rag-slide16 code,
+.kg-rag-slide16 code span {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+  padding: 0.05rem 0.28rem;
+  border-radius: 0.25rem;
+  border: 1px solid #cbd5e1;
+  text-shadow: none !important;
+}
