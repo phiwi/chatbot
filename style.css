@@ -69,23 +69,25 @@
   margin: 0 0 0.28rem;
   letter-spacing: -0.02em;
   font-weight: 700;
-  background: linear-gradient(100deg, #f8fafc 14%, #bae6fd 52%, #a7f3d0 88%);
+  background: linear-gradient(105deg, #f8fafc 8%, #bae6fd 38%, #7dd3fc 56%, #6ee7b7 74%, #f8fafc 96%);
+  background-size: 220% 220%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 10px 26px rgba(8, 47, 73, 0.32);
-  animation: heroRise 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  text-shadow: 0 12px 34px rgba(8, 47, 73, 0.34), 0 0 24px rgba(125, 211, 252, 0.2);
+  animation: heroRise 620ms cubic-bezier(0.22, 1, 0.36, 1) both, titleGradientShift 9s ease-in-out infinite;
   animation-delay: 90ms;
 }
 
 .hero-accent {
   width: clamp(160px, 28vw, 320px);
-  height: 2px;
+  height: 3px;
   margin: 0.32rem auto 0.5rem;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(125, 211, 252, 0), rgba(125, 211, 252, 0.95), rgba(110, 231, 183, 0.9), rgba(110, 231, 183, 0));
+  background: linear-gradient(90deg, rgba(125, 211, 252, 0), rgba(125, 211, 252, 1), rgba(110, 231, 183, 0.98), rgba(110, 231, 183, 0));
+  box-shadow: 0 0 26px rgba(125, 211, 252, 0.3), 0 0 18px rgba(110, 231, 183, 0.26);
   transform-origin: center;
-  animation: accentReveal 780ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: accentReveal 780ms cubic-bezier(0.22, 1, 0.36, 1) both, accentPulse 5.8s ease-in-out infinite;
   animation-delay: 210ms;
 }
 
@@ -217,6 +219,16 @@
   }
 }
 
+@keyframes titleGradientShift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
 @keyframes accentReveal {
   from {
     opacity: 0;
@@ -225,6 +237,18 @@
   to {
     opacity: 1;
     transform: scaleX(1);
+  }
+}
+
+@keyframes accentPulse {
+  0%,
+  100% {
+    filter: saturate(1);
+    opacity: 0.9;
+  }
+  50% {
+    filter: saturate(1.25);
+    opacity: 1;
   }
 }
 
